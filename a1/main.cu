@@ -3,8 +3,46 @@
 	Arjun Menon V, ee18b104
 	11 Feb, 2022
 
-	Timing Comparison Results:
+	Timing Comparison Results: It is clear from the following numbers that CDS dominates over computation for the 3 test
+	cases. The best case speedup of ~15x is obtained for the most compute-intensive test case ('large.txt'), which is much
+	smaller than the number of threads launched. 
+
+	- tc1.txt
+	|**************************TIMING COMPARISON*****************************|
+        Per Row Column Kernel: 3.8e-05s
+                Speedup: 0.315789
+        Per Column Row Kernel: 2.3e-05s
+                Speedup: 0.521739
+        Per Element Kernel: 1.9e-05s
+                Speedup: 0.631579
+        Sequential Loop on CPU: 1.2e-05s
+                Speedup: 1
+	|************************************************************************|
 	
+	- small.txt
+	|**************************TIMING COMPARISON*****************************|
+        Per Row Column Kernel: 3.7e-05s
+                Speedup: 0.243243
+        Per Column Row Kernel: 2.3e-05s
+                Speedup: 0.391304
+        Per Element Kernel: 1e-05s
+                Speedup: 0.9
+        Sequential Loop on CPU: 9e-06s
+                Speedup: 1
+	|************************************************************************|
+
+	
+	- large.txt
+	|**************************TIMING COMPARISON*****************************|
+        Per Row Column Kernel: 0.021741s
+                Speedup: 3.32377
+        Per Column Row Kernel: 0.034714s
+                Speedup: 2.08164
+        Per Element Kernel: 0.00332s
+                Speedup: 21.7657
+        Sequential Loop on CPU: 0.072262s
+                Speedup: 1
+	|************************************************************************|
 */
 
 #include <cuda.h>
@@ -153,11 +191,11 @@ int main(int argc,char **argv){
 	time_cpu = ((double)(clock() - start_cpu))/CLOCKS_PER_SEC;
 	printMatrix(h_c, m, n,"cpu_seqloop.txt");
 
-	cout<<"|*****************TIMING COMPARISON*******************|\n";
-	cout<<"\tPer Row Column Kernel: "<<time_rowwise<<"s"<<endl;
-	cout<<"\tPer Column Row Kernel: "<<time_colwise<<"s"<<endl;
-	cout<<"\tPer Element Kernel: "<<time_elemwise<<"s"<<endl;
-	cout<<"\tSequential Loop on CPU: "<<time_cpu<<"s"<<endl;
-	cout<<"|****************************************************|\n";
+	cout<<"|**************************TIMING COMPARISON*****************************|\n";
+	cout<<"\tPer Row Column Kernel: "<<time_rowwise<<"s\n\t\tSpeedup: "<<time_cpu/time_rowwise<<endl;
+	cout<<"\tPer Column Row Kernel: "<<time_colwise<<"s\n\t\tSpeedup: "<<time_cpu/time_colwise<<endl;
+	cout<<"\tPer Element Kernel: "<<time_elemwise<<"s\n\t\tSpeedup: "<<time_cpu/time_elemwise<<endl;
+	cout<<"\tSequential Loop on CPU: "<<time_cpu<<"s\n\t\tSpeedup: "<<time_cpu/time_cpu<<endl;
+	cout<<"|************************************************************************|\n";
 	return 0;
 }
