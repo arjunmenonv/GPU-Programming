@@ -57,7 +57,7 @@ ofstream outfile; //the handle for printing the output
 __global__ void per_row_column_kernel(long int *A, long int *B, long int *C,long int m, long int n){
 	unsigned int row_num = blockIdx.x*blockDim.x + threadIdx.x;
 	if(row_num < m){
-		for(int ii = 0; ii< n; ii++){
+		for(unsigned int ii = 0; ii< n; ii++){
 			C[row_num*n + ii] = (A[row_num*n + ii] + B[ii*m + row_num])*(B[ii*m + row_num] - A[row_num*n + ii]);
 		}
 	}
@@ -67,7 +67,7 @@ __global__ void per_row_column_kernel(long int *A, long int *B, long int *C,long
 __global__ void per_column_row_kernel(long int *A, long int *B, long int *C,long int m, long int n){
 	unsigned int col_num = blockIdx.x*blockDim.x*blockDim.y + threadIdx.x*blockDim.y + threadIdx.y;
 	if (col_num < n){
-		for(int ii = 0; ii < m; ii++){
+		for(unsigned int ii = 0; ii < m; ii++){
 			C[ii*n + col_num] = (A[ii*n + col_num] + B[col_num*m + ii])*(B[col_num*m + ii] - A[ii*n + col_num]);
 		}
 	}
