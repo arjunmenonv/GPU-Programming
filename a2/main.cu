@@ -34,7 +34,7 @@
 using namespace std;
 
 #define TILE_SIZE 32
-#define COMPUTE_MODE 4
+#define COMPUTE_MODE 3
 #define USE_PINNED_MEMORY 1
 /*
 	COMPUTE_MODE:
@@ -47,7 +47,8 @@ using namespace std;
 
 // write kernels here...
 __global__ void dTileTranspose(int rows, int cols, int *matrix, int *matrixT){
-	__shared__ int mat_tile[TILE_SIZE][TILE_SIZE];
+	// add one dummy location per tile-row to avoid bank conflicts during write to transpose matrix
+	__shared__ int mat_tile[TILE_SIZE][TILE_SIZE+1];
 	unsigned int id_x = blockIdx.x*blockDim.x + threadIdx.x;
 	unsigned int id_y = blockIdx.y*blockDim.y + threadIdx.y; 
 	
@@ -64,7 +65,8 @@ __global__ void dTileTranspose(int rows, int cols, int *matrix, int *matrixT){
 
 __global__ void dApBT(int rows, int cols, int *matrixA, int *matrixB, int *matrixApBT){
 	// Kernel to perform the operation A + B.T
-	__shared__ int mat_tile[TILE_SIZE][TILE_SIZE];
+	// add one dummy location per tile-row to avoid bank conflicts during write to transpose matrix
+	__shared__ int mat_tile[TILE_SIZE][TILE_SIZE+1];
 	unsigned int id_x = blockIdx.x*blockDim.x + threadIdx.x;
 	unsigned int id_y = blockIdx.y*blockDim.y + threadIdx.y; 
 	
